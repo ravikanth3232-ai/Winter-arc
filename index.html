@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b0b0b">
+<title>Winter Arc — 90 Day Discipline Challenge</title>
+<style>
+:root{--bg:#070707;--card:#111;--line:#292929;--text:#f5f5f5;--muted:#9b9b9b;--accent:#f4c400;--good:#35d07f}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#1a1a1a 0,#070707 42%);color:var(--text);font-family:Inter,Arial,sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:24px 0 18px;border-bottom:1px solid var(--line)}
+.brand{font-weight:900;letter-spacing:-1px;font-size:clamp(28px,6vw,52px)}.brand span{color:var(--accent)}.tag{color:var(--muted);margin-top:5px}
+button,input{font:inherit}.btn{border:1px solid #444;background:#171717;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}.btn:hover{border-color:var(--accent)}
+.hero{padding:26px 0}.hero h1{font-size:clamp(38px,7vw,76px);line-height:.95;margin:0 0 12px}.hero p{max-width:700px;color:#bbb;font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat,.panel{background:linear-gradient(180deg,#151515,#0f0f0f);border:1px solid var(--line);border-radius:16px;padding:18px}.stat b{font-size:28px}.stat small{display:block;color:var(--muted);margin-top:4px}
+.progress{height:10px;background:#252525;border-radius:99px;overflow:hidden;margin-top:12px}.bar{height:100%;background:var(--accent);width:0%;transition:.25s}
+section{margin:22px 0}.section-title{display:flex;justify-content:space-between;align-items:end;margin-bottom:12px}.section-title h2{margin:0;font-size:24px}.section-title span{color:var(--muted);font-size:13px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.day-name{text-align:center;color:var(--muted);font-size:12px;padding:5px}.day{min-height:78px;border:1px solid var(--line);background:#0e0e0e;border-radius:10px;padding:8px;cursor:pointer;position:relative}.day:hover{border-color:#555}.day.today{outline:2px solid var(--accent)}.day.done{background:#101b15;border-color:#256c45}.num{font-weight:800}.check{position:absolute;right:7px;top:6px;color:var(--good);font-weight:900}.day small{display:block;color:#777;margin-top:22px;font-size:10px}
+.habits{overflow:auto}.habit-table{min-width:760px;width:100%;border-collapse:collapse}.habit-table th,.habit-table td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:center}.habit-table th:first-child,.habit-table td:first-child{text-align:left;min-width:230px}.habit-table th{color:#aaa;font-size:12px}.habit-check{appearance:none;width:19px;height:19px;border:1px solid #555;border-radius:5px;background:#111;vertical-align:middle;cursor:pointer}.habit-check:checked{background:var(--accent);border-color:var(--accent);box-shadow:inset 0 0 0 4px #111}
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.rule{padding:14px;border:1px solid var(--line);border-radius:12px;background:#0e0e0e}.rule b{display:block;margin-bottom:5px}.rule span{color:#aaa;font-size:14px}
+.goals{display:grid;grid-template-columns:1.3fr 1fr;gap:12px}.goal-list{display:grid;gap:8px}.goal-list input{width:100%;background:#0c0c0c;border:1px solid var(--line);border-radius:9px;color:#fff;padding:11px}.note{min-height:120px;width:100%;resize:vertical;background:#0c0c0c;border:1px solid var(--line);border-radius:10px;color:#fff;padding:12px}
+footer{padding:30px 0 10px;color:#666;text-align:center;font-size:12px}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.rules,.goals{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}.day{min-height:68px}.wrap{padding:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><div class="brand">WINTER <span>ARC</span></div><div class="tag">DISCIPLINE • BETTER HABITS • A STRONGER YOU</div></div>
+  <button class="btn" onclick="resetAll()">Reset Tracker</button>
+</header>
+
+<div class="hero">
+  <h1>90 DAYS.<br><span style="color:var(--accent)">NO EXCUSES.</span></h1>
+  <p>A simple personal discipline dashboard. Track your habits every day, build your streak, and finish the Winter Arc stronger than you started.</p>
+</div>
+
+<div class="grid">
+  <div class="stat"><b id="daysDone">0</b><small>Days completed</small></div>
+  <div class="stat"><b id="consistency">0%</b><small>Consistency</small></div>
+  <div class="stat"><b id="streak">0</b><small>Current streak</small></div>
+  <div class="stat"><b id="points">0</b><small>Habit points</small></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<section>
+<div class="section-title"><h2>90-Day Calendar</h2><span>Oct 1 — Dec 29, 2026</span></div>
+<div class="calendar" id="calendar"></div>
+</section>
+
+<section>
+<div class="section-title"><h2>Daily Habits</h2><span>Tap each box when completed</span></div>
+<div class="panel habits"><table class="habit-table"><thead><tr><th>Habit</th><th>Today</th><th>Target</th></tr></thead><tbody id="habitBody"></tbody></table></div>
+</section>
+
+<section>
+<div class="section-title"><h2>Winter Arc Rules</h2><span>Consistency over perfection</span></div>
+<div class="rules">
+  <div class="rule"><b>01 — NO ZERO DAYS</b><span>Do at least one meaningful thing for your body, mind, or future every day.</span></div>
+  <div class="rule"><b>02 — NEVER MISS TWICE</b><span>One bad day can happen. Two in a row becomes a pattern.</span></div>
+  <div class="rule"><b>03 — TRAIN</b><span>Minimum 4 workouts per week + 8,000–10,000 steps on most days.</span></div>
+  <div class="rule"><b>04 — EAT WITH PURPOSE</b><span>Prioritize protein, whole foods, fiber and hydration; limit junk food.</span></div>
+  <div class="rule"><b>05 — SLEEP 7+ HOURS</b><span>Protect recovery and keep a consistent sleep/wake routine.</span></div>
+  <div class="rule"><b>06 — CONTROL THE PHONE</b><span>Keep the first and last 30 minutes of your day social-media free.</span></div>
+  <div class="rule"><b>07 — LEARN DAILY</b><span>Spend 30–60 minutes building a useful skill.</span></div>
+  <div class="rule"><b>08 — REVIEW WEEKLY</b><span>Every week: check what worked, what failed, and what changes next.</span></div>
+</div>
+</section>
+
+<section class="goals">
+<div class="panel"><div class="section-title"><h2>My Winter Arc Goals</h2></div><div class="goal-list" id="goals"></div></div>
+<div class="panel"><div class="section-title"><h2>Notes / Reflection</h2></div><textarea id="notes" class="note" placeholder="What went well? What will you improve?"></textarea></div>
+</section>
+
+<footer>DISCIPLINE BUILDS FREEDOM • WINTER ARC 2026</footer>
+</div>
+<script>
+const START=new Date('2026-10-01T00:00:00'), DAYS=90;
+const habits=[
+ ['Workout','4x / week'],['Protein target','Daily'],['Water 3L+','Daily'],
+ ['Steps 8k–10k','Daily'],['Learning 30–60 min','Daily'],['Sleep 7+ hrs','Daily'],
+ ['No junk food','Daily'],['Social media control','Daily'],['Plan tomorrow','Daily'],['Meditation / breathing','10 min']
+];
+const key='winterArc2026';
+let state=JSON.parse(localStorage.getItem(key)||'{"days":{},"habits":{},"goals":["","", "","",""],"notes":""}');
+const iso=d=>d.toISOString().slice(0,10);
+const save=()=>localStorage.setItem(key,JSON.stringify(state));
+function dayIndex(date){return Math.floor((date-START)/86400000)+1}
+function renderCalendar(){
+ const el=document.getElementById('calendar'); el.innerHTML='';
+ ['MON','TUE','WED','THU','FRI','SAT','SUN'].forEach(x=>{let e=document.createElement('div');e.className='day-name';e.textContent=x;el.appendChild(e)});
+ let first=new Date(START); let offset=(first.getDay()+6)%7;
+ for(let i=0;i<offset;i++){let e=document.createElement('div');e.className='day';e.style.visibility='hidden';el.appendChild(e)}
+ for(let i=0;i<DAYS;i++){
+   let d=new Date(START);d.setDate(d.getDate()+i);let k=iso(d), e=document.createElement('div');
+   e.className='day'+(state.days[k]?' done':'');
+   if(k===iso(new Date()))e.classList.add('today');
+   e.innerHTML=`<div class="num">${d.getDate()}</div>${state.days[k]?'<div class="check">✓</div>':''}<small>Day ${i+1}</small>`;
+   e.onclick=()=>{state.days[k]=!state.days[k];save();render();};
+   el.appendChild(e);
+ }
+}
+function renderHabits(){
+ const body=document.getElementById('habitBody');body.innerHTML='';
+ habits.forEach((h,i)=>{
+   const tr=document.createElement('tr');
+   const checked=state.habits[i+'-'+iso(new Date())]?'checked':'';
+   tr.innerHTML=`<td>${i+1}. ${h[0]}</td><td><input class="habit-check" type="checkbox" ${checked}></td><td>${h[1]}</td>`;
+   tr.querySelector('input').onchange=(ev)=>{state.habits[i+'-'+iso(new Date())]=ev.target.checked;save();render();};
+   body.appendChild(tr);
+ });
+}
+function renderGoals(){
+ const el=document.getElementById('goals');el.innerHTML='';
+ state.goals.forEach((g,i)=>{let inp=document.createElement('input');inp.placeholder=`Goal ${i+1}`;inp.value=g;inp.oninput=()=>{state.goals[i]=inp.value;save()};el.appendChild(inp)});
+ const n=document.getElementById('notes');n.value=state.notes;n.oninput=()=>{state.notes=n.value;save()};
+}
+function stats(){
+ const completed=Object.values(state.days).filter(Boolean).length;
+ let points=0;Object.values(state.habits).forEach(v=>{if(v)points++});
+ let streak=0;
+ for(let i=0;i<DAYS;i++){let d=new Date(START);d.setDate(d.getDate()+i);if(state.days[iso(d)])streak++;else if(i<dayIndex(new Date()))streak=0}
+ const elapsed=Math.min(DAYS,Math.max(0,dayIndex(new Date())));
+ document.getElementById('daysDone').textContent=completed;
+ document.getElementById('consistency').textContent=(elapsed?Math.round(completed/elapsed*100):0)+'%';
+ document.getElementById('streak').textContent=streak;
+ document.getElementById('points').textContent=points;
+ document.getElementById('bar').style.width=Math.min(100,completed/DAYS*100)+'%';
+}
+function render(){renderCalendar();renderHabits();renderGoals();stats()}
+function resetAll(){if(confirm('Reset all Winter Arc progress?')){localStorage.removeItem(key);location.reload()}}
+render();
+</script>
+</body>
+</html>
