@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#d71920"><title>R Fitness — Winter Arc</title>
+<style>
+:root{--red:#e21b23;--red2:#b70f15;--bg:#f5f5f5;--card:#fff;--ink:#151515;--muted:#777;--line:#e5e5e5;--dark:#111}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Arial,sans-serif}.app{max-width:1200px;margin:auto;padding:18px}
+header{background:var(--dark);color:white;border-radius:20px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:12px;background:var(--red);display:grid;place-items:center;font-size:28px;font-weight:900}.brand b{font-size:20px}.brand small{display:block;color:#aaa}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #ddd;background:white;padding:10px 13px;border-radius:10px;cursor:pointer;font-weight:700}.btn.red{background:var(--red);color:#fff;border-color:var(--red)}
+.hero{padding:24px 5px 15px}.hero h1{font-size:clamp(38px,7vw,76px);line-height:.9;margin:0}.hero h1 span{color:var(--red)}.hero p{color:var(--muted);max-width:760px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat,.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}.stat b{font-size:27px}.stat small{display:block;color:var(--muted);margin-top:3px}.bar{height:9px;background:#eee;border-radius:20px;overflow:hidden;margin-top:12px}.bar i{display:block;height:100%;background:var(--red);width:0}
+section{margin-top:20px}.title{display:flex;justify-content:space-between;align-items:end;margin-bottom:10px}.title h2{margin:0}.title small{color:var(--muted)}.two{display:grid;grid-template-columns:1.25fr .75fr;gap:12px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.dow{text-align:center;color:#888;font-size:11px;padding:4px}.day{background:#fafafa;border:1px solid var(--line);border-radius:9px;min-height:62px;padding:7px;cursor:pointer}.day.done{background:#e9f8ed;border-color:#5bbd73}.day.today{outline:2px solid var(--red)}.day .n{font-weight:800}.day small{display:block;color:#999;margin-top:10px;font-size:9px}
+.habits{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.habit{border:1px solid var(--line);border-radius:11px;padding:11px;display:flex;justify-content:space-between;align-items:center}.habit input{width:20px;height:20px;accent-color:var(--red)}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.field label{display:block;font-size:11px;color:#777;margin-bottom:4px}.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:9px;background:white}.field textarea{min-height:80px;resize:vertical}
+.water{display:flex;align-items:center;gap:8px}.water strong{font-size:28px}.waterbar{height:12px;background:#eee;border-radius:20px;overflow:hidden;margin:10px 0}.waterbar i{display:block;height:100%;background:#555;width:0}.cups{display:flex;flex-wrap:wrap;gap:5px}.cup{width:32px;height:32px;border:1px solid #ccc;background:#fff;border-radius:7px;cursor:pointer}.cup.on{background:#222;color:#fff}
+.meals{overflow:auto}.mealrow{display:grid;grid-template-columns:1.2fr repeat(5,1fr);gap:6px;margin-bottom:6px}.mealrow input{min-width:0;padding:9px;border:1px solid var(--line);border-radius:8px}.totals{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.pill{background:#f1f1f1;padding:10px;border-radius:9px;text-align:center}.pill b{display:block}.profile{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:20px;z-index:5}.modal.show{display:flex}.modalbox{background:#fff;border-radius:18px;padding:20px;max-width:520px;width:100%;max-height:90vh;overflow:auto}.close{float:right}.workout-list{display:grid;gap:8px}.exercise{display:grid;grid-template-columns:1.5fr .7fr .7fr .7fr auto;gap:5px}.exercise input{padding:9px;border:1px solid var(--line);border-radius:8px}
+footer{text-align:center;color:#999;padding:25px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.controls,.profile{grid-template-columns:1fr}.mealrow{grid-template-columns:1.2fr repeat(5,90px)}.meals{overflow:auto}}
+</style>
+</head>
+<body><div class="app">
+<header><div class="brand"><div class="logo">R</div><div><b>R FITNESS</b><small>WINTER ARC • 90 DAY CHALLENGE</small></div></div><div class="actions"><button class="btn" onclick="openProfile()">Profile</button><button class="btn red" onclick="openWorkout()">Workout Schedule</button></div></header>
+
+<div class="hero"><h1 id="welcome">WINTER <span>ARC.</span></h1><p>90 days of training, nutrition, recovery and discipline. Your daily data stays saved on this device.</p></div>
+
+<div class="grid">
+<div class="stat"><b id="dayNo">Day 1</b><small>Current day</small></div>
+<div class="stat"><b id="completion">0%</b><small>Habit completion</small></div>
+<div class="stat"><b id="streak">0 🔥</b><small>Streak</small></div>
+<div class="stat"><b id="kcal">0</b><small>Today's calories</small></div>
+</div><div class="bar"><i id="progress"></i></div>
+
+<section><div class="title"><h2>📅 90-Day Calendar</h2><small>Oct 1 – Dec 29, 2026</small></div><div class="card"><div class="calendar" id="calendar"></div></div></section>
+
+<section class="two">
+<div class="card"><div class="title"><h2>✅ Daily Habits</h2><small id="habitScore">0/10</small></div><div class="habits" id="habits"></div></div>
+<div class="card"><div class="title"><h2>😴 Sleep</h2><small>Daily log + graph</small></div>
+<div class="controls"><div class="field"><label>Hours</label><input id="sleep" type="number" min="0" max="24" step=".25" placeholder="7.5"></div><div class="field"><label>Goal</label><input id="sleepGoal" type="number" min="1" max="24" value="8"></div></div>
+<button class="btn red" style="margin-top:8px" onclick="saveSleep()">Save sleep</button><div style="margin-top:12px;color:#777;font-size:13px">Today: <b id="sleepToday">—</b> • 7-day avg: <b id="sleepAvg">—</b></div>
+</div></section>
+
+<section class="two">
+<div class="card"><div class="title"><h2>💧 Water</h2><small>Tap each 250 ml</small></div><div class="water"><strong id="waterTotal">0</strong> ml / <span id="waterGoal">3000</span> ml</div><div class="waterbar"><i id="waterBar"></i></div><div class="cups" id="cups"></div></div>
+<div class="card"><div class="title"><h2>⏰ Alarms</h2><small>Browser reminders</small></div><div class="controls"><div class="field"><label>Time</label><input id="alarmTime" type="time"></div><div class="field"><label>Label</label><input id="alarmLabel" placeholder="Water / Meal / Workout"></div></div><button class="btn red" style="margin-top:8px" onclick="addAlarm()">Add alarm</button><div id="alarms" style="margin-top:10px"></div></div></section>
+
+<section><div class="title"><h2>🏋️ Today's Workout</h2><small id="workoutName">No workout scheduled</small></div><div class="card" id="todayWorkout"></div></section>
+
+<section><div class="title"><h2>🍽️ Meals & Macros</h2><button class="btn red" onclick="addMeal()">+ Add meal</button></div><div class="card meals"><div id="mealRows"></div><div class="totals" id="totals"></div></div></section>
+
+<section><div class="title"><h2>🔥 Calorie Matrix</h2><small>Calculated from your profile</small></div><div class="card"><div class="grid" id="matrix"></div><p style="color:#777;font-size:12px">Targets are estimates from profile inputs. Use your BCA report values when available and adjust with a qualified professional where needed.</p></div></section>
+
+
+<section class="two">
+<div class="card">
+  <div class="title"><h2>📜 Winter Arc Rules</h2><small>My non-negotiables</small></div>
+  <div id="rules"></div>
+</div>
+<div class="card">
+  <div class="title"><h2>🎯 90-Day Goals</h2><button class="btn red" onclick="saveGoals()">Save</button></div>
+  <div class="controls">
+    <div class="field"><label>Goal 1</label><input id="g1"></div>
+    <div class="field"><label>Goal 2</label><input id="g2"></div>
+    <div class="field"><label>Goal 3</label><input id="g3"></div>
+  </div>
+</div>
+</section>
+
+<section class="two">
+<div class="card">
+  <div class="title"><h2>📝 Daily Reflection</h2><small>Saved for today</small></div>
+  <div class="field"><label>How was today?</label><textarea id="reflection" placeholder="Training, diet, energy, wins, problems..."></textarea></div>
+  <button class="btn red" style="margin-top:8px" onclick="saveReflection()">Save reflection</button>
+</div>
+<div class="card">
+  <div class="title"><h2>🏆 Points & History</h2><small>Consistency score</small></div>
+  <div class="grid" id="pointsBox"></div>
+</div>
+</section>
+
+<footer>R FITNESS • WINTER ARC 2026 • 90 DAYS</footer>
+</div>
+
+<div class="modal" id="profileModal"><div class="modalbox"><button class="btn close" onclick="closeProfile()">Close</button><h2>👤 Profile</h2><div class="profile">
+<div class="field"><label>Name</label><input id="pName"></div><div class="field"><label>Age</label><input id="pAge" type="number"></div>
+<div class="field"><label>Height (cm)</label><input id="pHeight" type="number"></div><div class="field"><label>Weight (kg)</label><input id="pWeight" type="number"></div>
+<div class="field"><label>Target weight (kg)</label><input id="pTarget" type="number"></div><div class="field"><label>Activity multiplier</label><select id="pActivity"><option value="1.2">Sedentary</option><option value="1.375">Light</option><option value="1.55" selected>Moderate</option><option value="1.725">High</option></select></div>
+</div><div class="field" style="margin-top:8px"><label>BCA notes / values</label><textarea id="pBca" placeholder="Paste BCA values here: body fat %, skeletal muscle, BMR, visceral fat, etc."></textarea></div><button class="btn red" style="margin-top:10px" onclick="saveProfile()">Save profile</button></div></div>
+
+<div class="modal" id="workoutModal"><div class="modalbox"><button class="btn close" onclick="closeWorkout()">Close</button><h2>🏋️ Workout Schedule</h2><p style="color:#777;font-size:13px">Create/edit the workout for each weekday.</p><div id="workoutEditor"></div><button class="btn red" style="margin-top:10px" onclick="saveWorkout()">Save schedule</button></div></div>
+
+<script>
+const START=new Date('2026-10-01T00:00:00'), DAYS=90, KEY='rFitnessWinterArcV2';
+const habits=['Workout','Diet followed','Protein target','Water goal','8K–10K steps','Sleep goal','No junk food','Learning 30–60 min','Meditation','Plan tomorrow'];
+let S=JSON.parse(localStorage.getItem(KEY)||'{}');
+S.profile??={name:'',age:25,height:170,weight:79,target:67,activity:1.55,bca:''};S.days??={};S.sleep??={};S.water??={};S.alarms??=[];S.meals??={};S.workouts??={};S.goals??=['','',''];S.reflections??={};
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+const iso=d=>d.toISOString().slice(0,10), today=iso(new Date());
+function dayIndex(d=new Date()){return Math.max(1,Math.min(DAYS,Math.floor((d-START)/86400000)+1))}
+function dayKey(i){let d=new Date(START);d.setDate(d.getDate()+i);return iso(d)}
+function renderCalendar(){let c=document.getElementById('calendar');c.innerHTML='';['MON','TUE','WED','THU','FRI','SAT','SUN'].forEach(x=>{let e=document.createElement('div');e.className='dow';e.textContent=x;c.appendChild(e)});let off=(START.getDay()+6)%7;for(let i=0;i<off;i++){let e=document.createElement('div');c.appendChild(e)}for(let i=0;i<DAYS;i++){let k=dayKey(i),e=document.createElement('div');e.className='day'+(S.days[k]?.complete?' done':'')+(k===today?' today':'');e.innerHTML=`<div class="n">${new Date(k).getDate()}</div><small>Day ${i+1}</small>`;e.onclick=()=>selectDay(k);c.appendChild(e)}}
+function selectDay(k){alert('Selected '+k+'. Daily history is saved for this date.')}
+function renderHabits(){let k=today;S.days[k]??={habits:{}};let box=document.getElementById('habits');box.innerHTML='';let done=0;habits.forEach((h,i)=>{let v=!!S.days[k].habits?.[i];if(v)done++;let d=document.createElement('div');d.className='habit';d.innerHTML=`<span>${h}</span><input type="checkbox" ${v?'checked':''}>`;d.querySelector('input').onchange=e=>{S.days[k].habits??={};S.days[k].habits[i]=e.target.checked;S.days[k].complete=Object.values(S.days[k].habits).filter(Boolean).length>=7;save();render()};box.appendChild(d)});document.getElementById('habitScore').textContent=done+'/'+habits.length;document.getElementById('completion').textContent=Math.round(done/habits.length*100)+'%'}
+function renderWater(){let ml=S.water[today]||0;document.getElementById('waterTotal').textContent=ml;document.getElementById('waterBar').style.width=Math.min(100,ml/(S.profile.waterGoal||3000)*100)+'%';document.getElementById('waterGoal').textContent=S.profile.waterGoal||3000;let c=document.getElementById('cups');c.innerHTML='';for(let i=1;i<=12;i++){let b=document.createElement('button');b.className='cup'+(ml>=i*250?' on':'');b.textContent='¼';b.title='250 ml';b.onclick=()=>{S.water[today]=ml>=i*250?(i-1)*250:i*250;save();render()};c.appendChild(b)}}
+function saveSleep(){let v=+document.getElementById('sleep').value;if(v>=0){S.sleep[today]=v;save();render()}}
+function renderSleep(){document.getElementById('sleep').value=S.sleep[today]??'';document.getElementById('sleepToday').textContent=S.sleep[today]!=null?S.sleep[today]+' h':'—';let vals=[];for(let i=0;i<7;i++){let d=new Date();d.setDate(d.getDate()-i);if(S.sleep[iso(d)]!=null)vals.push(S.sleep[iso(d)])}document.getElementById('sleepAvg').textContent=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1)+' h':'—'}
+function addAlarm(){let t=document.getElementById('alarmTime').value,l=document.getElementById('alarmLabel').value||'Reminder';if(!t)return;S.alarms.push({t,l});save();renderAlarms();document.getElementById('alarmLabel').value=''}
+function renderAlarms(){let a=document.getElementById('alarms');a.innerHTML=S.alarms.map((x,i)=>`<div style="padding:8px;border-bottom:1px solid #eee">${x.t} — ${x.l} <button class="btn" onclick="S.alarms.splice(${i},1);save();renderAlarms()">×</button></div>`).join('')}
+function openProfile(){document.getElementById('profileModal').classList.add('show');let p=S.profile;[['pName','name'],['pAge','age'],['pHeight','height'],['pWeight','weight'],['pTarget','target'],['pActivity','activity'],['pBca','bca']].forEach(([id,k])=>document.getElementById(id).value=p[k]??'')}
+function closeProfile(){document.getElementById('profileModal').classList.remove('show')}
+function saveProfile(){let p=S.profile;p.name=document.getElementById('pName').value;p.age=+document.getElementById('pAge').value||25;p.height=+document.getElementById('pHeight').value||170;p.weight=+document.getElementById('pWeight').value||70;p.target=+document.getElementById('pTarget').value||p.weight;p.activity=+document.getElementById('pActivity').value;p.bca=document.getElementById('pBca').value;save();closeProfile();render()}
+function openWorkout(){let e=document.getElementById('workoutEditor');e.innerHTML='';['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].forEach(day=>{let w=S.workouts[day]||{name:'',ex:[]};let div=document.createElement('div');div.style='border:1px solid #eee;padding:10px;border-radius:10px;margin:8px 0';div.innerHTML=`<b>${day}</b><input data-day="${day}" class="wname" value="${w.name}" placeholder="Workout name" style="width:100%;margin:7px 0;padding:9px;border:1px solid #ddd;border-radius:8px"><div class="exs" data-day="${day}"></div><button class="btn" onclick="addExercise(this)">+ Exercise</button>`;e.appendChild(div);(w.ex||[]).forEach(x=>addExercise(div.querySelector('.btn'),x));});document.getElementById('workoutModal').classList.add('show')}
+function addExercise(btn,x={name:'',sets:'',reps:'',weight:''}){let box=btn.parentElement.querySelector('.exs');let d=document.createElement('div');d.className='exercise';d.innerHTML=`<input class="en" value="${x.name}" placeholder="Exercise"><input class="es" value="${x.sets}" placeholder="Sets"><input class="er" value="${x.reps}" placeholder="Reps"><input class="ew" value="${x.weight}" placeholder="kg"><button class="btn" onclick="this.parentElement.remove()">×</button>`;box.appendChild(d)}
+function saveWorkout(){document.querySelectorAll('#workoutEditor>div').forEach(div=>{let day=div.querySelector('.wname').dataset.day;S.workouts[day]={name:div.querySelector('.wname').value,ex:[...div.querySelectorAll('.exercise')].map(x=>({name:x.querySelector('.en').value,sets:x.querySelector('.es').value,reps:x.querySelector('.er').value,weight:x.querySelector('.ew').value}))}});save();closeWorkout();render()}
+function closeWorkout(){document.getElementById('workoutModal').classList.remove('show')}
+function renderWorkout(){let names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];let w=S.workouts[names[new Date().getDay()]];document.getElementById('workoutName').textContent=w?.name||'No workout scheduled';document.getElementById('todayWorkout').innerHTML=w?.ex?.length?w.ex.map(x=>`<div style="padding:9px;border-bottom:1px solid #eee"><b>${x.name}</b> — ${x.sets||'-'} sets × ${x.reps||'-'} reps ${x.weight?'• '+x.weight+' kg':''}</div>`).join(''):'<span style="color:#888">Add your workout schedule above.</span>'}
+function addMeal(){let a=S.meals[today]||[];a.push({name:'Meal '+(a.length+1),k:0,p:0,c:0,f:0,fi:0});S.meals[today]=a;save();renderMeals()}
+function renderMeals(){let a=S.meals[today]||[];document.getElementById('mealRows').innerHTML=a.map((m,i)=>`<div class="mealrow"><input value="${m.name}" placeholder="Meal"><input type="number" value="${m.k}" placeholder="kcal" onchange="meal(${i},'k',this.value)"><input type="number" value="${m.p}" placeholder="protein" onchange="meal(${i},'p',this.value)"><input type="number" value="${m.c}" placeholder="carbs" onchange="meal(${i},'c',this.value)"><input type="number" value="${m.f}" placeholder="fat" onchange="meal(${i},'f',this.value)"><input type="number" value="${m.fi}" placeholder="fiber" onchange="meal(${i},'fi',this.value)"></div>`).join('');let t=['k','p','c','f','fi'].map(k=>a.reduce((s,m)=>s+(+m[k]||0),0));document.getElementById('totals').innerHTML=`<div class="pill"><b>${t[0]}</b>kcal</div><div class="pill"><b>${t[1]}g</b>Protein</div><div class="pill"><b>${t[2]}g</b>Carbs</div><div class="pill"><b>${t[3]}g</b>Fat</div><div class="pill"><b>${t[4]}g</b>Fiber</div>`;document.getElementById('kcal').textContent=t[0]}
+function meal(i,k,v){S.meals[today][i][k]=+v||0;save();renderMeals();renderMatrix()}
+function renderMatrix(){let p=S.profile;let bmr=p.age&&p.height&&p.weight?(10*p.weight+6.25*p.height-5*p.age+5):0;let tdee=bmr*p.activity;let target=tdee-300;let protein=p.weight*1.6,fat=p.weight*.8,carbs=Math.max(0,(target-protein*4-fat*9)/4);let arr=[['BMR',bmr],['TDEE',tdee],['Calorie target',target],['Protein target',protein],['Fat target',fat],['Carb target',carbs]];document.getElementById('matrix').innerHTML=arr.map(x=>`<div class="stat"><b>${Math.round(x[1])}</b><small>${x[0]}</small></div>`).join('')}
+
+function renderRules(){
+ const rules=[
+  'NO ZERO DAYS — do something meaningful every day.',
+  'NEVER MISS TWICE — one bad day does not become two.',
+  'Complete your planned workout or active recovery.',
+  'Hit your nutrition and protein targets as closely as practical.',
+  'Drink your planned daily water target.',
+  'Protect your sleep and recovery.',
+  'Track honestly — no fake check-ins.',
+  'Review your progress every 7 days.'
+ ];
+ document.getElementById('rules').innerHTML=rules.map((r,i)=>`<div style="padding:9px 0;border-bottom:1px solid #eee"><b>${i+1}.</b> ${r}</div>`).join('');
+}
+function loadGoals(){
+ ['g1','g2','g3'].forEach((id,i)=>document.getElementById(id).value=S.goals[i]||'');
+ document.getElementById('reflection').value=S.reflections[today]||'';
+}
+function saveGoals(){
+ S.goals=['g1','g2','g3'].map(id=>document.getElementById(id).value.trim());
+ save(); alert('Goals saved');
+}
+function saveReflection(){
+ S.reflections[today]=document.getElementById('reflection').value;
+ save(); alert('Reflection saved');
+}
+function renderPoints(){
+ let days=Object.values(S.days);
+ let habitDone=days.reduce((sum,d)=>sum+Object.values(d.habits||{}).filter(Boolean).length,0);
+ let complete=days.filter(d=>d.complete).length;
+ let waterDays=Object.keys(S.water).filter(k=>S.water[k]>0).length;
+ let sleepDays=Object.keys(S.sleep).filter(k=>S.sleep[k]!=null).length;
+ let points=habitDone*10+complete*25+waterDays*5+sleepDays*5;
+ document.getElementById('pointsBox').innerHTML=[
+  ['Points',points],['Perfect days',complete],['Habit checks',habitDone],['Tracked days',Math.max(waterDays,sleepDays,days.length)]
+ ].map(x=>`<div class="stat"><b>${x[1]}</b><small>${x[0]}</small></div>`).join('');
+}
+
+function render(){renderCalendar();renderHabits();renderWater();renderSleep();renderAlarms();renderWorkout();renderMeals();renderMatrix();renderRules();loadGoals();renderPoints();document.getElementById('dayNo').textContent='Day '+dayIndex();document.getElementById('welcome').innerHTML=S.profile.name?`HI ${S.profile.name.toUpperCase()}.<br><span>WINTER ARC.</span>`:'WINTER <span>ARC.</span>';let comp=Object.values(S.days).filter(x=>x.complete).length;
+document.getElementById('progress').style.width=Math.min(100,comp/DAYS*100)+'%';
+let st=0; for(let i=dayIndex();i>=1;i--){ if(S.days[dayKey(i-1)]?.complete) st++; else if(i!==dayIndex()) break; }
+document.getElementById('streak').textContent=st+' 🔥'}
+render();
+</script></body></html>
